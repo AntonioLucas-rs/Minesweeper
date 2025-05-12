@@ -3,11 +3,20 @@ import {
   StyleSheet,
   Text,
   View,
+  Alert,
 } from 'react-native';
 
 import MineField from './src/components/MineField';
 import params from './src/params';
-import { createMinesBoard } from './src/functions';
+import {
+  createMinesBoard,
+  cloneBoard,
+  openField,
+  hasExplosion,
+  wonGame,
+  showMines,
+  invertFlag,
+} from './src/functions';
 
 
 export default class App extends Component {
@@ -28,8 +37,41 @@ export default class App extends Component {
     const rows = params.getRowsAmount();
     return {
       board: createMinesBoard(rows, cols, this.minesAmount()),
+      won: false,
+      lost: false,
     };
   };
+
+  onOpenField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    openField(board, row, column);
+    const lost = hasExplosion(board);
+    const won = wonGame(board);
+
+    if (lost) {
+      showMines(board);
+      Alert.alert('Perdeuuu!', 'Moisés nao consegue neh Moisés!');
+    }
+    if (won) {
+      Alert.alert('Ganhouuu!', 'Veryy Goodd!');
+    }
+
+    this.setState({ board, won, lost });
+  };
+
+  onSelectField = (row, column) => {
+    const board = cloneBoard(this.setState.board);
+    invertFlag(board, row, column);
+    const won = wonGame(board);
+
+    if (won) {
+      Alert.alert('Ganhouuu!', 'Veryy Goodd!');
+    }
+
+    this.setState({ board, won });
+  };
+
+
   render() {
     return (
       <View style={styles.container}>
@@ -42,7 +84,11 @@ export default class App extends Component {
           {params.getRowsAmount()} x {params.getColumnsAmount()}
         </Text>
         <View style={styles.board}>
-          <MineField board={this.state.board}/>
+          <MineField
+            board={this.state.board}
+            onOpenField={this.onOpenField}
+            onSelectField={this.onSelectField}
+          />
         </View>
       </View>
     );

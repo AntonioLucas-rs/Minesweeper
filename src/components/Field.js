@@ -2,7 +2,7 @@ import React from 'react';
 import Mine from './Mine';
 import Flag from './Flag';
 import params from '../params';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native';
 
 
 export default props => {
@@ -23,15 +23,17 @@ export default props => {
     }
 
     return (
-        <View style={styleField}>
-            { !mined && opened && nearMines > 0 && (
-                <Text style={[styles.label, { color: color }]}>
-                    {nearMines}
-                </Text>
-            )}
-            { mined && opened ? <Mine /> : false }
-            { flagged && !opened ? <Flag /> : false}
-        </View>
+        <TouchableWithoutFeedback onPress={props.onOpen}>
+            <View style={styleField}>
+                { !mined && opened && nearMines > 0 && (
+                    <Text style={[styles.label, { color: color }]}>
+                        {nearMines}
+                    </Text>
+                )}
+                { mined && opened ? <Mine /> : false }
+                { flagged && !opened ? <Flag /> : false}
+            </View>
+        </TouchableWithoutFeedback>
     );
 };
 
